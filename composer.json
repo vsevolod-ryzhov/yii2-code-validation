@@ -2,7 +2,6 @@
     "name": "vsevolod-ryzhov/yii2-code-validation",
     "description": "Validate form change via secret code (SMS and etc)",
     "type": "yii2-extension",
-    "version": "dev-master",
     "require": {
         "php": ">=7.1",
         "yiisoft/yii2": "*"
