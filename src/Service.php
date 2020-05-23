@@ -104,6 +104,7 @@ class Service
     public function clear(): void
     {
         unset($this->storage[$this->key]);
+        $this->data = null;
     }
 
     private function getTime(): ?int
