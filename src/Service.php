@@ -13,10 +13,12 @@ class Service
     const CODE_KEY = 'code';
     const TIME_KEY = 'time';
 
-    //step in seconds
-    const TIME_STEP = 30;
-    private $key;
+    /**
+     * Update timeout in seconds
+     */
+    private $timeout;
 
+    private $key;
     private $storage;
 
     private $data = null;
@@ -30,10 +32,11 @@ class Service
         return $this->data;
     }
 
-    public function __construct(ArrayAccess $session, string $key = 'verify')
+    public function __construct(ArrayAccess $session, string $key = 'verify', int $timeout = 30)
     {
         $this->storage = $session;
         $this->key = $key;
+        $this->timeout = $timeout;
     }
 
     /**
@@ -60,11 +63,13 @@ class Service
     public function renewCode(): Response
     {
         if (!$this->exists()) {
+            // can't update empty storage
             return new Response(false, 0, null);
         }
         $time = $this->getTime();
-        if ($time + self::TIME_STEP > time()) {
-            return new Response(false, ($time + self::TIME_STEP - time()), null);
+        if ($time + $this->timeout > time()) {
+            // update timeout is not expired, wait ($time + $this->timeout - time()) seconds
+            return new Response(false, ($time + $this->timeout - time()), null);
         }
 
         $code = StringHelper::generateCode();
@@ -73,8 +78,10 @@ class Service
             self::CODE_KEY => $code,
             self::TIME_KEY => time()
         ];
+        // update current data array
+        $this->data = $this->storage[$this->key];
 
-        return new Response(true, self::TIME_STEP, $code);
+        return new Response(true, $this->timeout, $code);
     }
 
     public function exists(): bool
