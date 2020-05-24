@@ -46,7 +46,7 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $code = $this->service->set($form);
         $this->assertNotEmpty($code);
         $this->assertRegExp('/['.StringHelper::CODE_DICTIONARY.']+/', $code);
-        $this->assertTrue(($code == $this->service->getCode()));
+        $this->assertSame($code, $this->service->getCode());
     }
 
     public function testStoreSuccess()
@@ -56,10 +56,20 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $this->service->set($form);
         $this->assertNotEmpty($this->session);
         $data = $this->service->getData();
-        $this->assertTrue(($form->attr1 == $data['attr1']));
-        $this->assertTrue(($form->attr2 == $data['attr2']));
-        $this->assertTrue(($form->attr1 == $this->session->data[self::ACCESS_KEY][Service::DATA_KEY]['attr1']));
-        $this->assertTrue(($form->attr2 == $this->session->data[self::ACCESS_KEY][Service::DATA_KEY]['attr2']));
+        $this->assertSame($form->attr1, $data['attr1']);
+        $this->assertSame($form->attr2, $data['attr2']);
+        $this->assertSame($form->attr1, $this->session->data[self::ACCESS_KEY][Service::DATA_KEY]['attr1']);
+        $this->assertSame($form->attr2, $this->session->data[self::ACCESS_KEY][Service::DATA_KEY]['attr2']);
     }
 
+    public function testCodeLength()
+    {
+        $form = $this->createFilledForm();
+
+        for ($i = 3; $i < 10; $i++) {
+            $service = new Service($this->session, self::ACCESS_KEY, 30, $i);
+            $code = $service->set($form);
+            $this->assertSame($i, strlen($code));
+        }
+    }
 }

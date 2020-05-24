@@ -20,6 +20,7 @@ class Service
 
     private $key;
     private $storage;
+    private $codeLength;
 
     private $data = null;
 
@@ -32,11 +33,12 @@ class Service
         return $this->data;
     }
 
-    public function __construct(ArrayAccess $session, string $key = 'verify', int $timeout = 30)
+    public function __construct(ArrayAccess $session, string $key = 'verify', int $timeout = 30, int $codeLength = 6)
     {
         $this->storage = $session;
         $this->key = $key;
         $this->timeout = $timeout;
+        $this->codeLength = $codeLength;
     }
 
     /**
@@ -46,7 +48,7 @@ class Service
      */
     public function set(Model $form): string
     {
-        $code = StringHelper::generateCode();
+        $code = StringHelper::generateCode($this->codeLength);
 
         $this->storage[$this->key] = [
             self::DATA_KEY => $form->attributes,
