@@ -6,6 +6,7 @@ namespace vsevolodryzhov\yii2CodeValidation;
 
 use ArrayAccess;
 use PHPUnit_Framework_TestCase;
+use ReflectionClass;
 use yii\base\ArrayAccessTrait;
 use yii\base\Model;
 
@@ -42,15 +43,22 @@ class ServiceTest extends PHPUnit_Framework_TestCase
 
     public function testCodeGenerateSuccess()
     {
+        $reflection = new ReflectionClass(StringHelper::class);
+        if (isset($reflection)) {
+            $constants = $reflection->getConstants();
+        }
         $form = $this->createFilledForm();
         $code = $this->service->set($form);
         $this->assertNotEmpty($code);
-        $this->assertRegExp('/['.StringHelper::CODE_DICTIONARY.']+/', $code);
+        $this->assertRegExp('/['.$constants['CODE_DICTIONARY'].']+/', $code);
         $this->assertSame($code, $this->service->getCode());
     }
 
     public function testStoreSuccess()
     {
+        $reflection = new ReflectionClass(Service::class);
+        $constants = $reflection->getConstants();
+
         $form = $this->createFilledForm();
         $this->assertTrue(empty($this->session->data));
         $this->service->set($form);
@@ -58,8 +66,8 @@ class ServiceTest extends PHPUnit_Framework_TestCase
         $data = $this->service->getData();
         $this->assertSame($form->attr1, $data['attr1']);
         $this->assertSame($form->attr2, $data['attr2']);
-        $this->assertSame($form->attr1, $this->session->data[self::ACCESS_KEY][Service::DATA_KEY]['attr1']);
-        $this->assertSame($form->attr2, $this->session->data[self::ACCESS_KEY][Service::DATA_KEY]['attr2']);
+        $this->assertSame($form->attr1, $this->session->data[self::ACCESS_KEY][$constants['DATA_KEY']]['attr1']);
+        $this->assertSame($form->attr2, $this->session->data[self::ACCESS_KEY][$constants['DATA_KEY']]['attr2']);
     }
 
     public function testCodeLength()

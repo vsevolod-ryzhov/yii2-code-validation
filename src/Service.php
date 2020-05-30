@@ -9,9 +9,9 @@ use yii\base\Model;
 
 class Service
 {
-    const DATA_KEY = 'data';
-    const CODE_KEY = 'code';
-    const TIME_KEY = 'time';
+    private const DATA_KEY = 'data';
+    private const CODE_KEY = 'code';
+    private const TIME_KEY = 'time';
 
     /**
      * Update timeout in seconds
@@ -93,14 +93,14 @@ class Service
 
     public function getCode(): ?string
     {
-        $data = $this->getStorageData();
-        return $data[self::CODE_KEY];
+        $stored_data = $this->getStorageData();
+        return $stored_data[self::CODE_KEY];
     }
 
     public function getData()
     {
-        $data = $this->getStorageData();
-        return $data[self::DATA_KEY];
+        $stored_data = $this->getStorageData();
+        return $stored_data[self::DATA_KEY];
     }
 
     public function clear(): void
@@ -111,7 +111,7 @@ class Service
 
     private function getTime(): ?int
     {
-        $data = $this->getStorageData();
-        return $data[self::TIME_KEY];
+        $stored_data = $this->getStorageData();
+        return $stored_data[self::TIME_KEY];
     }
 }

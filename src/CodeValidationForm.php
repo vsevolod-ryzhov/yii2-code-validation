@@ -34,14 +34,14 @@ class CodeValidationForm extends Model
         $this->storedModel = $storedModel;
     }
 
-    public function rules()
+    public function rules(): array
     {
         $rules = [];
         $rules[] = ['code', 'compare', 'compareValue' => $this->storedCode, 'skipOnEmpty' => false, 'message' => 'Wrong code'];
         return $rules;
     }
 
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'code' => 'Enter code'
