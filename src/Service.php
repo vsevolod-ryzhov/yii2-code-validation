@@ -74,7 +74,7 @@ class Service
             return new Response(false, ($time + $this->timeout - time()), null);
         }
 
-        $code = StringHelper::generateCode();
+        $code = StringHelper::generateCode($this->codeLength);
         $this->storage[$this->key] = [
             self::DATA_KEY => $this->getData(),
             self::CODE_KEY => $code,

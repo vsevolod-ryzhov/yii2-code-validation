@@ -47,4 +47,19 @@ class CodeValidationForm extends Model
             'code' => 'Enter code'
         ];
     }
+
+    /**
+     * @return Model|null
+     */
+    public function getStoredModel(): ?Model
+    {
+        $data = null;
+        if ($this->validate()) {
+            // return data only if validation of code success
+            $data = $this->storedModel;
+        }
+        return $data;
+    }
+
+
 }
